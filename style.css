@@ -119,11 +119,12 @@ notes-grid {
   gap: 1.5rem;
 }
 
+/* Note Card Styles */
 .note-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 0.75rem;
-  padding: 1.5rem;.
+  padding: 1.5rem;
   box-shadow: 0 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.2s;
   position: relative;
@@ -152,6 +153,23 @@ notes-grid {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.note-content {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.note-date {
+  color: #7c3aed;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .note-actions {
@@ -192,23 +210,6 @@ notes-grid {
 .action-btn svg {
   width: 1rem;
   height: 1rem;
-}
-
-.note-content {
-  color: #6b7280;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  display: -webkit-box;
-  -webkit-line-clam: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.note-date {
-  color: #7c3aed;
-  font-size: 0.75rem;
-  font-weight: 500;
 }
 
 /* Empty State */
