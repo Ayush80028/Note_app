@@ -1,46 +1,38 @@
-
 let notes = []
 let editingNoteId = null
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadNotes()
-  renderNotes()
-})
+async function fetchNotesFromUrl(url) {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) throw new Error("Network response was not ok")
+    const data = await response.json()
+    notes = data // assuming data is an array of note objects
 
+    const container = document.getElementById("notesContainer")
+    container.innerHTML = "" // Clear previous notes
 
-function loadNotes() {
-  const savedNotes = localStorage.getItem("notes")
-  if (savedNotes) {
-    notes = JSON.parse(savedNotes)
-  } else {
-  
-    notes = [
-      {
-        id: "1",
-        title: "Shopping List",
-        content: "Milk, Bread, Eggs, Apples, Chicken, Rice, Pasta, Tomatoes",
-        createdAt: new Date("2025-07-15T11:50:00").toISOString(),
-        updatedAt: new Date("2025-07-15T11:50:00").toISOString(),
-      },
-      {
-        id: "2",
-        title: "Meeting Notes",
-        content: "Discussed project timeline and deliverables. Next meeting scheduled for Friday at 2 PM.",
-        createdAt: new Date("2025-07-15T11:20:00").toISOString(),
-        updatedAt: new Date("2025-07-15T11:20:00").toISOString(),
-      },
-      {
-        id: "3",
-        title: "Welcome to Notes App",
-        content:
-          'This is your first note! You can create, edit, and delete notes using this application. Try creating a new note by clicking the "New Note" button.',
-        createdAt: new Date("2025-07-14T12:20:00").toISOString(),
-        updatedAt: new Date("2025-07-14T12:20:00").toISOString(),
-      },
-    ]
-    saveNotes()
+    for (let i = 0; i < notes.length; i++) {
+      const note = notes[i]
+      const noteDiv = document.createElement("div")
+      noteDiv.className = "note-card"
+      noteDiv.innerHTML = `
+        <div class="note-header">
+          <h3 class="note-title">${escapeHtml(note.title)}</h3>
+        </div>
+        <p class="note-content">${escapeHtml(note.content)}</p>
+        <div class="note-date">${formatDate(note.updatedAt)}</div>
+      `
+      container.appendChild(noteDiv)
+    }
+  } catch (error) {
+    console.error("Failed to fetch notes:", error)
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  // paste database url here
+  fetchNotesFromUrl("our database url")
+})
 
 
 function saveNotes() {
