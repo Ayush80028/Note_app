@@ -1,44 +1,26 @@
 let notes = []
 let editingNoteId = null
 
-async function fetchNotesFromUrl(url) {
+async function fetchNotesFromBackend() {
   try {
-    const response = await fetch(url)
+    const response = await fetch("http://localhost:1358/notes")
     if (!response.ok) throw new Error("Network response was not ok")
     const data = await response.json()
-    notes = data // assuming data is an array of note objects
+    notes = data["Notes present currently in DB"] || []
 
-    const container = document.getElementById("notesContainer")
-    container.innerHTML = "" // Clear previous notes
-
-    for (let i = 0; i < notes.length; i++) {
-      const note = notes[i]
-      const noteDiv = document.createElement("div")
-      noteDiv.className = "note-card"
-      noteDiv.innerHTML = `
-        <div class="note-header">
-          <h3 class="note-title">${escapeHtml(note.title)}</h3>
-        </div>
-        <p class="note-content">${escapeHtml(note.content)}</p>
-        <div class="note-date">${formatDate(note.updatedAt)}</div>
-      `
-      container.appendChild(noteDiv)
-    }
+    renderNotes()
   } catch (error) {
     console.error("Failed to fetch notes:", error)
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // paste database url here
-  fetchNotesFromUrl("our database url")
+  fetchNotesFromBackend()
 })
 
-
 function saveNotes() {
-  localStorage.setItem("notes", JSON.stringify(notes))
-}
 
+}
 
 function renderNotes(filteredNotes = null) {
   const notesToRender = filteredNotes || notes
@@ -134,7 +116,7 @@ function editNote(id) {
 }
 
 
-function saveNote() {
+async function saveNote() {
   const title = document.getElementById("noteTitle").value.trim()
   const content = document.getElementById("noteContent").value.trim()
 
@@ -146,8 +128,8 @@ function saveNote() {
   const now = new Date().toISOString()
 
   if (editingNoteId) {
-  
-    const noteIndex = notes.findIndex((n) => n.id === editingNoteId)
+   
+    const noteIndex = notes.findIndex((n) => n._id === editingNoteId || n.id === editingNoteId)
     if (noteIndex !== -1) {
       notes[noteIndex] = {
         ...notes[noteIndex],
@@ -156,23 +138,28 @@ function saveNote() {
         updatedAt: now,
       }
     }
+    saveNotes()
+    renderNotes()
+    closeModal()
   } else {
-  
-    const newNote = {
-      id: Date.now().toString(),
-      title: title || "Untitled",
-      content: content,
-      createdAt: now,
-      updatedAt: now,
+ 
+    try {
+      const res = await fetch("http://localhost:1358/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          notesTitle: title || "Untitled",
+          notesContent: content,
+        }),
+      })
+      if (!res.ok) throw new Error("Failed to create note")
+      await fetchNotesFromBackend()
+      closeModal()
+    } catch (err) {
+      alert("Failed to create note: " + err.message)
     }
-    notes.unshift(newNote) 
   }
-
-  saveNotes()
-  renderNotes()
-  closeModal()
 }
-
 
 function deleteNote(id) {
   if (confirm("Are you sure you want to delete this note?")) {
@@ -225,7 +212,6 @@ function escapeHtml(text) {
 
 
 document.addEventListener("keydown", (e) => {
-  // Escape key to close modal
   if (e.key === "Escape") {
     closeModal()
   }
