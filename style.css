@@ -67,14 +67,14 @@ body {
   height: 1rem;
 }
 
-/* Main Content */
+
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
-/* Search Styles */
+
 .search-container {
   margin-bottom: 2rem;
 }
@@ -112,14 +112,14 @@ body {
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
 }
 
-/* Notes Grid */
+
 notes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 
-/* Note Card Styles */
+
 .note-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -212,7 +212,7 @@ notes-grid {
   height: 1rem;
 }
 
-/* Empty State */
+
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
